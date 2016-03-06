@@ -29,7 +29,7 @@ SECTION "hblank", ROM0 [$48]
 
 SECTION "timer",  ROM0 [$50]
 	di
-	call $1492
+	call Timer
 	reti
 
 SECTION "serial", ROM0 [$58]
@@ -202,9 +202,10 @@ Main::
 	ld a, $97
 	ld [$FF00 + $40], a
 .screen_off:
+.wait_lyc_vblank:
 	ld a, [$FF00 + $44]
 	cp a, $90
-	jr nz, .screen_off
+	jr nz, .wait_lyc_vblank
 	xor a, a
 	ld [$FF00 + $40], a
 	ld [$FF00 + $81], a
