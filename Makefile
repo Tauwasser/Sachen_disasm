@@ -1,14 +1,25 @@
-.PHONY = all clean
+MD5 := md5sum -c
 
-all: 16in1.gb
+.SUFFIXES: 
+.PHONY = all clean compare
+
+roms := 16in1.gb
+
+all: $(roms)
 
 clean:
 	rm -rf *.o
 	rm -rf *.map
 	rm -rf *.sym
+	rm -f $(roms)
 
-16in1.gb : 16in1.o
-	rgblink -n 16in1.sym -m 16in1.map -p 0xFF -o 16in1.gb 16in1.o
+compare: 16in1.gb
+	@$(MD5) roms.md5
 
-16in1.o : 16in1.asm
-	rgbasm -h -o 16in1.o 16in1.asm
+%.asm: ;
+
+%.gb : %.o
+	rgblink -n $(basename $@).sym -m $(basename $@).map -p 0xFF -o $@ $<
+
+%.o : %.asm
+	rgbasm -h -o $@ $<
